@@ -1,9 +1,8 @@
 package com.breaktoy.backend_search_flights.Controller;
 
 import com.breaktoy.backend_search_flights.Entity.IATAItem;
-import com.breaktoy.backend_search_flights.Model.AccessTokenResponse;
+import com.breaktoy.backend_search_flights.Model.API.FlightOffersResponse.FlightOffersResponse;
 import com.breaktoy.backend_search_flights.Service.FlightService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
