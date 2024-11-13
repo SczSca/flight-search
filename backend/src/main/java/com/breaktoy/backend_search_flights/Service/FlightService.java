@@ -80,7 +80,6 @@ public class FlightService {
     public ResponseEntity<FlightOffersResponse> returnFlightOffers(String originLocationCode, String destinationLocationCode, String departureDate, String returnDate, Integer adults, Boolean nonStop, String currencyCode){
         HttpHeaders headers = new HttpHeaders();
 
-        System.out.println(keyword);
         String accessTokenStr = getAccessTokenStr();
         System.out.println(accessTokenStr);
 
