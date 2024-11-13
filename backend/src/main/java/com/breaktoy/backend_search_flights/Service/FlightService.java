@@ -84,8 +84,39 @@ public class FlightService {
         System.out.println(accessTokenStr);
 
         headers.setBearerAuth(accessTokenStr);
-//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        String uri = UriComponentsBuilder.fromHttpUrl(apiUrlFlightOffers)
+                .queryParam("originLocationCode", originLocationCode)
+                .queryParam("destinationLocationCode", destinationLocationCode)
+                .queryParam("departureDate",departureDate)
+                .queryParam("returnDate",returnDate)
+                .queryParam("adults",adults)
+                .queryParam("nonStop",nonStop)
+                .queryParam("currencyCode",currencyCode)
+                .queryParam("max",30)
+                .toUriString();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+
+        String jsonResponse = response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            FlightOffersResponse iataResponse = objectMapper.readValue(jsonResponse, FlightOffersResponse.class);
+            List<FlightOffers> data = iataResponse.getData();
+            Dictionaries dictionaries = iataResponse.getDictionaries();
+            mountData(data, dictionaries);
+            return new ResponseEntity<FlightOffersResponse>(iataResponse,HttpStatus.OK);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<IATAItem> getAirportInformation(String keyword){
+
+        HttpHeaders headers = new HttpHeaders();
+
+        String accessTokenStr = getAccessTokenStr();
+
+        headers.setBearerAuth(accessTokenStr);
         String uri = UriComponentsBuilder.fromHttpUrl(apiUrlIATA)
                 .queryParam("subType", "AIRPORT")
                 .queryParam("keyword", keyword)
