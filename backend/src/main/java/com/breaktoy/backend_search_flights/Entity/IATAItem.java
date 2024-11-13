@@ -10,4 +10,5 @@ import lombok.Setter;
 public class IATAItem {
     private String name;
     private String iataCode;
+    private String detailedName;
 }
