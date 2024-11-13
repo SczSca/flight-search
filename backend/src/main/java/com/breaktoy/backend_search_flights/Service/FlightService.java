@@ -156,4 +156,88 @@ public class FlightService {
         }
         return accessTokenObj.getAccessToken();
     }
+
+    private void mountData(List<FlightOffers> flightOffersData, Dictionaries dictionaries){
+
+        HashMap<String, String> carriers = dictionaries.getCarriers();
+        HashMap<String, String> aircraft = dictionaries.getAircraft();
+
+        mountAirportName(dictionaries);
+
+
+        for(FlightOffers flightOffer: flightOffersData){
+            List<Itineraries> itinerariesList = flightOffer.getItineraries();
+            for(Itineraries itinerary: itinerariesList){
+
+                List<Segments> segmentsList = itinerary.getSegments();
+                //assigning props value to first segment
+                Segments firstSegment = segmentsList.get(0);
+
+                setAirlineName(firstSegment, carriers);
+                setAircraftName(firstSegment,aircraft);
+                //Starting with the second segment due to setLayoverTime logic which needs departureDate from i and arrivalDate from i-1
+                for(int i = 1; i < segmentsList.size(); i++){
+                    Segments segment = segmentsList.get(i);
+                    Segments previousSegment = segmentsList.get(i - 1);
+                    //set layoverTime
+                    setLayoverTime(segment, segment.getDeparture().getAt(), previousSegment.getArrival().getAt() );
+                    //set operating airline name
+                    setAirlineName(segment,carriers);
+                    setAircraftName(segment, aircraft);
+
+                }
+            }
+        }
+        dictionaries.setCarriers(new HashMap<>());
+        dictionaries.setAircraft(new HashMap<>());
+    }
+
+    private void setAirlineName(Segments segment, HashMap<String, String> carriers){
+
+        String operatingCarrierCode = segment.getOperating().getCarrierCode();
+        String operatingAirlineName = carriers.get(operatingCarrierCode);
+        segment.getOperating().setAirlineName(operatingAirlineName);
+
+        String carrierCode = segment.getCarrierCode();
+        String airlineName = carriers.get(carrierCode);
+        segment.setAirlineName(airlineName);
+    }
+
+    private void mountAirportName(Dictionaries dictionaries){
+
+        for (String key: dictionaries.getLocations().keySet()){
+
+            //API calls to IATA endpoint
+            List<IATAItem> airportInfoList = getAirportInformation(key);
+
+            if(airportInfoList != null && !airportInfoList.isEmpty()){
+            IATAItem airportInfoItem = airportInfoList.get(0);
+            //write name of the airport in Location
+            dictionaries.getLocations().get(key).setAirportName(airportInfoItem.getDetailedName());
+            }
+        }
+    }
+
+    private void setLayoverTime(Segments segment, String departureTime, String arrivalTime){
+
+        LocalDateTime dateTimeDeparture = LocalDateTime.parse(departureTime);
+        LocalDateTime dateTimeArrival = LocalDateTime.parse(arrivalTime);
+
+        Duration duration = Duration.between(dateTimeArrival,dateTimeDeparture);
+
+        long days = duration.toDaysPart();
+        int hours = duration.toHoursPart();
+        int minutes = duration.toMinutesPart();
+        String layoverTime = "P" + days + "DT" + hours + "H" + minutes + "M"; //e.g. P2DT15H20M
+        System.out.println(layoverTime);
+        segment.setLayoverTime(layoverTime);
+
+    }
+    private void setAircraftName(Segments segment, HashMap<String, String> aircraft){
+
+        String aircraftCode = segment.getAircraft().getCode();
+        String aircraftName = aircraft.get(aircraftCode);
+        segment.getAircraft().setName(aircraftName);
+
+    }
 }
