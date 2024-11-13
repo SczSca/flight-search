@@ -20,7 +20,20 @@ public class FlightController {
     public ResponseEntity<List<IATAItem>> getIATARecommendations(
         @RequestParam(value = "keyword", required = true) String keyword
     ){
-        return flightService.getIATAsRecommendations(keyword);
+        return flightService.returnIATAsRecommendations(keyword);
+    }
+
+    @GetMapping("/search/flights")
+    public ResponseEntity<FlightOffersResponse> getFlightOffers(
+            @RequestParam(value = "originLocationCode", required = true) String originLocationCode,
+            @RequestParam(value = "destinationLocationCode", required = true) String destinationLocationCode,
+            @RequestParam(value = "departureDate", required = true) String departureDate,
+            @RequestParam(value = "returnDate", required = true) String returnDate,
+            @RequestParam(value = "adults", required = true) Integer adults,
+            @RequestParam(value = "nonStop", required = true) Boolean nonStop,
+            @RequestParam(value = "currencyCode", required = true) String currencyCode
+    ){
+        return flightService.returnFlightOffers(originLocationCode,destinationLocationCode,departureDate,returnDate,adults,nonStop,currencyCode);
     }
 
 }
