@@ -1,4 +1,4 @@
-package com.breaktoy.backend_search_flights.Model;
+package com.breaktoy.backend_search_flights.Model.API;
 
 import lombok.Builder;
 import lombok.Getter;
