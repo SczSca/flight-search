@@ -72,7 +72,12 @@ public class FlightService {
 
     }
 
-    public ResponseEntity<List<IATAItem>> getIATAsRecommendations(String keyword){
+    public ResponseEntity<List<IATAItem>> returnIATAsRecommendations(String keyword){
+
+            return new ResponseEntity<List<IATAItem>>(getAirportInformation(keyword),HttpStatus.OK);
+    }
+
+    public ResponseEntity<FlightOffersResponse> returnFlightOffers(String originLocationCode, String destinationLocationCode, String departureDate, String returnDate, Integer adults, Boolean nonStop, String currencyCode){
         HttpHeaders headers = new HttpHeaders();
 
         System.out.println(keyword);
