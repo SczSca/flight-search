@@ -1,9 +1,14 @@
 package com.breaktoy.backend_search_flights.Service;
 
 import com.breaktoy.backend_search_flights.Entity.AccessToken;
+import com.breaktoy.backend_search_flights.Entity.FlightOffers.FlightOffers;
+import com.breaktoy.backend_search_flights.Entity.FlightOffers.Itineraries.Itineraries;
+import com.breaktoy.backend_search_flights.Entity.FlightOffers.Itineraries.Segments.Segments;
 import com.breaktoy.backend_search_flights.Entity.IATAItem;
-import com.breaktoy.backend_search_flights.Model.AccessTokenResponse;
-import com.breaktoy.backend_search_flights.Model.IATAResponse;
+import com.breaktoy.backend_search_flights.Model.API.AccessTokenResponse;
+import com.breaktoy.backend_search_flights.Model.API.FlightOffersResponse.Dictionaries.Dictionaries;
+import com.breaktoy.backend_search_flights.Model.API.FlightOffersResponse.FlightOffersResponse;
+import com.breaktoy.backend_search_flights.Model.API.IATAResponse;
 import com.breaktoy.backend_search_flights.Repository.LocalFlightRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 

@@ -3,7 +3,6 @@ package com.breaktoy.backend_search_flights.Model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.breaktoy.backend_search_flights.Entity.IATAItem;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
