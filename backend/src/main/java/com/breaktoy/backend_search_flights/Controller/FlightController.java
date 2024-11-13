@@ -16,7 +16,7 @@ import java.util.List;
 public class FlightController {
     private final FlightService flightService;
 
-    @GetMapping("/test/IATA")
+    @GetMapping("/info/IATA")
     public ResponseEntity<List<IATAItem>> getIATARecommendations(
         @RequestParam(value = "keyword", required = true) String keyword
     ){
