@@ -122,7 +122,7 @@ public class FlightService {
                 .queryParam("keyword", keyword)
 //                .queryParam("page[limit]","2")
 //                .queryParam("page[offset]","0")
-//                .queryParam("sort","analytics.travelers.score")
+                .queryParam("sort","analytics.travelers.score")
                 .queryParam("view","LIGHT")
                 .toUriString();
         HttpEntity<Void> entity = new HttpEntity<>(headers);
