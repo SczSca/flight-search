@@ -37,6 +37,9 @@ public class FlightService {
     @Value("${API_URL_IATA}")
     private String apiUrlIATA;
 
+    @Value("${API_URL_FLIGHT_OFFERS}")
+    private String apiUrlFlightOffers;
+
     @Value("${API_KEY}")
     private String apiKey;
 
