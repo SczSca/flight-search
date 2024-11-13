@@ -136,10 +136,10 @@ public class FlightService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private Boolean isAccessTokenExpired(LocalDateTime expirationDate){
+
         LocalDateTime now = LocalDateTime.now();
         return expirationDate.isBefore(now);
     }
