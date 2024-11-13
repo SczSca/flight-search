@@ -132,11 +132,7 @@ public class FlightService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             IATAResponse iataResponse = objectMapper.readValue(jsonResponse, IATAResponse.class);
-            List<IATAItem> data = iataResponse.getData();
-            for(IATAItem datajson: data){
-                System.out.println(datajson.getIataCode());
-            }
-            return new ResponseEntity<List<IATAItem>>(data,HttpStatus.ACCEPTED);
+            return iataResponse.getData();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
