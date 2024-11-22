@@ -1,4 +1,16 @@
-import { IATAItem } from "../types";
+import { currencyValues, IATAItem } from "../types";
+
+export const baseFlight_path: string = "/flights";
+
+export const btnTextsArr: string[] = ["Recommended", "Cheapest", "Fastest"];
+
+export const currencyItems: currencyValues[] = ["USD", "MXN", "EUR"];
+
+export const currencySymbols = {
+  USD: "$",
+  MXN: "$",
+  EUR: "€",
+};
 
 export const currencyItems: string[] = ["USD", "MXN", "EUR"];
 
