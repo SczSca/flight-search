@@ -14,16 +14,16 @@ export interface ComponentWithChildren {
 
 export interface Dictionaries {
   locations: Record<string, Location>;
-  aircraft: Record<string, string>;
-  carriers: Record<string, string>;
+  // aircraft: Record<string, string>;
+  // carriers: Record<string, string>;
 }
 
 export interface FareDetailsBySegment {
   segmentId: string;
   cabin: string;
   class: string;
-  includedCheckBags: IncludedCheckedBags;
-  amenities: Amenities[];
+  includedCheckedBags: IncludedCheckedBags;
+  amenities: Amenities[] | null;
 }
 
 export interface Fees {
@@ -38,7 +38,7 @@ export interface FOPrice extends TPPrice {
 
 export interface FlightLocation {
   iataCode: string;
-  terminal: string;
+  terminal: string | null;
   at: string;
 }
 
@@ -76,7 +76,9 @@ export interface IATAItem {
 }
 
 export interface IncludedCheckedBags {
-  quantity: string;
+  quantity: number | null;
+  weight: number | null;
+  weightUnit: string | null;
 }
 
 export interface Itineraries {
@@ -87,12 +89,12 @@ export interface Itineraries {
 export interface Location {
   cityCode: string;
   countryCode: string;
-  airportName: string;
+  airportName: string | null;
 }
 
 export interface Operating {
   carrierCode: string;
-  airline: string;
+  airlineName: string;
 }
 
 export interface Segments {
@@ -105,7 +107,7 @@ export interface Segments {
   aircraft: Aircraft;
   operating: Operating;
   duration: string;
-  layOverTime: string;
+  layoverTime: string | null;
 }
 
 export interface TPPrice {
