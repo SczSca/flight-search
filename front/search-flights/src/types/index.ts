@@ -140,3 +140,5 @@ export interface TravelerPricings {
   price: TPPrice;
   fareDetailsBySegment: FareDetailsBySegment[];
 }
+
+export type currencyValues = "USD" | "MXN" | "EUR";
