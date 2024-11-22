@@ -1,19 +1,21 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import { FlightDetails, FlightOffers, Home } from "../pages";
+import { FlightDetails, FlightPages, Home } from "../pages";
+import { HeaderResults } from "../pages/layout/HeaderResults";
+import {
+  baseFlight_path,
+  flightDetails_path,
+  flightResults_path,
+} from "../utils";
 
 const FlightSearchRoutes = () => {
   return (
     <Routes>
       <Route index element={<Home />} />
-      <Route
-        path="search/from/:sourceLocation/to/:destinationLocation"
-        element={<FlightOffers />}
-      />
-      <Route
-        path="details/from/:sourceLocation/to/:destinationLocation"
-        element={<FlightDetails />}
-      />
+      <Route path={baseFlight_path} element={<HeaderResults />}>
+        <Route path={flightResults_path} element={<FlightPages />} />
+        <Route path={flightDetails_path} element={<FlightDetails />} />
+      </Route>
     </Routes>
   );
 };
