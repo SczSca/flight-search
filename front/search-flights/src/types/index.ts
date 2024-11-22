@@ -36,6 +36,17 @@ export interface FOPrice extends TPPrice {
   grandTotal: string;
 }
 
+export interface FlightCardData {
+  id: string;
+  // price: { total: string };
+  price: FOPrice;
+  travelerPricings: TravelerPricings[];
+  itineraries: {
+    duration: string;
+    segments: Segments[];
+  }[];
+}
+
 export interface FlightLocation {
   iataCode: string;
   terminal: string | null;
