@@ -1,0 +1,15 @@
+export const Box_sxStyle = {
+  position: "absolute",
+  top: "30%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  maxHeight: "80vh",
+  overflowY: "auto",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  mx: "auto",
+  mt: "10%",
+};
