@@ -1,10 +1,18 @@
 import { createContext, useMemo, useState } from "react";
-import { ComponentWithChildren, FlightSearchRequest, IATAItem } from "../types";
+import {
+  ComponentWithChildren,
+  Dictionaries,
+  FlightOffersResponse,
+  FlightSearchRequest,
+  IATAItem,
+  Location,
+} from "../types";
 import { SelectChangeEvent } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { DateValidationError } from "@mui/x-date-pickers";
 import { currencyItems } from "../utils";
 import { useDebounce } from "../hooks/useDebounce";
+import { responseDummy } from "../utils/flightResponseDummy";
 
 interface searchFlightContextI {
   handleDepartureIATAChange: (
@@ -27,19 +35,25 @@ interface searchFlightContextI {
   setErrorDepartureDate: React.Dispatch<
     React.SetStateAction<DateValidationError | null>
   >;
+  setFlightResults: React.Dispatch<
+    React.SetStateAction<FlightOffersResponse | undefined>
+  >;
+  setLocations: React.Dispatch<React.SetStateAction<Record<string, Location>>>;
   arrivalIATAItems: IATAItem[];
   arrivalIATAOptions: string[];
   arrivalIATAStr: string;
+  checkedNonStop: boolean;
+  currency: string;
   debouncedIATADepartureReq: string;
   debouncedIATAArrivalReq: string;
   departureDate: Dayjs | null;
   departureIATAItems: IATAItem[];
   departureIATAOptions: string[];
   departureIATAStr: string;
-  checkedNonStop: boolean;
-  currency: string;
   errorDepartureDateMessage: string;
   errorArrivalDateMessage: string;
+  flightResults: FlightOffersResponse | undefined;
+  locations: Record<string, Location>;
   tomorrow: dayjs.Dayjs;
 }
 
@@ -47,6 +61,7 @@ export const searchFlightContext = createContext<searchFlightContextI>(null!);
 searchFlightContext.displayName = "searchFlightProvider";
 
 export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
+  /** States for Search Form */
   const tomorrow = dayjs().add(1, "day");
 
   const [departureDate, setDepartureDate] = useState<Dayjs | null>(tomorrow);
@@ -75,6 +90,16 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
   const [errorDepartureDate, setErrorDepartureDate] =
     useState<DateValidationError | null>(null);
 
+  const [flightResults, setFlightResults] = useState<
+    FlightOffersResponse | undefined
+  >(responseDummy);
+
+  const [locations, setLocations] = useState<Record<string, Location>>(
+    responseDummy.dictionaries.locations
+  );
+  // {
+  //   "000": { cityCode: "000", countryCode: "000", airportName: null },
+  // }
   const errorArrivalDateMessage = useMemo(() => {
     switch (errorArrivalDate) {
       case "maxDate":
@@ -170,6 +195,8 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
         setDepartureIATAStr,
         setErrorArrivalDate,
         setErrorDepartureDate,
+        setFlightResults,
+        setLocations,
         arrivalIATAItems,
         arrivalIATAOptions,
         arrivalIATAStr,
@@ -183,6 +210,8 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
         currency,
         errorArrivalDateMessage,
         errorDepartureDateMessage,
+        flightResults,
+        locations,
         tomorrow,
       }}
     >
