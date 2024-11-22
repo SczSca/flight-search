@@ -1,3 +1,3 @@
 export { FlightDetails } from "./FlightDetails/FlightDetails";
-export { FlightOffers } from "./FlightOffers/FlightOffers";
+export { FlightPages } from "./FlightsPage/FlightsPage";
 export { Home } from "./Home/Home";
