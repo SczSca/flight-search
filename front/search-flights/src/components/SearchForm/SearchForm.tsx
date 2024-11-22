@@ -12,7 +12,12 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { currencyItems, IATAItems, IATAOptions } from "../../utils";
+import {
+  baseFlight_path,
+  currencyItems,
+  IATAItems,
+  IATAOptions,
+} from "../../utils";
 import { searchFlightContext } from "../../context/SearchFlightContext";
 import { APIConsumerContext } from "../../context/APIConsumerContext";
 import { FlightSearchRequest, IATAItem } from "../../types";
@@ -98,9 +103,12 @@ export const SearchForm = () => {
       }
     }
     console.log(formData);
-    navigate(`search/from/${departureName}/to/${arrivalName}`, {
-      state: formData,
-    });
+    navigate(
+      `${baseFlight_path}/search/from/${departureName}/to/${arrivalName}`,
+      {
+        state: formData,
+      }
+    );
   };
 
   useEffect(() => {
@@ -114,10 +122,8 @@ export const SearchForm = () => {
       let keyword: string;
       if (debouncedIATAArrivalReq) {
         keyword = arrivalIATAStr;
-        console.log("arrival cons");
       } else {
         keyword = departureIATAStr;
-        console.log("departur cons");
       }
       //this prevents
       if (keyword) {
@@ -130,11 +136,9 @@ export const SearchForm = () => {
             if (debouncedIATAArrivalReq) {
               setArrivalIATAItems(IATAItems);
               setArrivalIATAOptions(IATAOptions);
-              console.log("arrival promise");
             } else {
               setDepartureIATAItems(IATAItems);
               setDepartureIATAOptions(IATAOptions);
-              console.log("departure promise");
             }
           })
           .catch((error) => {
