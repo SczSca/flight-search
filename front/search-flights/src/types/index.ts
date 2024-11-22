@@ -127,6 +127,13 @@ export interface TPPrice {
   base: string;
 }
 
+export interface TravelerInfo {
+  travelerId: string;
+  travelerType: string;
+
+  fareDetailsBySegment: FareDetailsBySegment;
+}
+
 export interface TravelerPricings {
   travelerId: string;
   travelerType: string;
