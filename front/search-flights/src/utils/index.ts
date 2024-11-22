@@ -12,8 +12,13 @@ export const currencySymbols = {
   EUR: "€",
 };
 
-export const currencyItems: string[] = ["USD", "MXN", "EUR"];
+export const flightResults_path =
+  "search/from/:sourceLocation/to/:destinationLocation";
+export const completeFlightResults_path = `${baseFlight_path}/${flightResults_path}`;
 
+export const flightDetails_path =
+  "details/from/:sourceLocation/to/:destinationLocation/:id";
+export const completeFlightDetails_path = `${baseFlight_path}/${flightDetails_path}`;
 //comment and or remove when endpoints restablish
 export const IATAItems: IATAItem[] = [
   {
