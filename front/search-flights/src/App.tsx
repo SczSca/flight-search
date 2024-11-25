@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import FlightSearchRoutes from "./routes/FlightSearchRoutes";
-import { Home } from "./pages";
 
 function App() {
   return (
