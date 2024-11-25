@@ -19,10 +19,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": true
     // "noUncheckedSideEffectImports": true,
-
-    "types": ["vitest/globals", "@vitest/browser/matchers"]
   },
   "include": ["src", "setupTests.tsx"]
 }
