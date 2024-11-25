@@ -3,8 +3,6 @@ import { boxModal_sxStyle, lefChild_sxStyle, SC_sxStyle } from "./SC_sxStyles";
 import {
   Aircraft,
   currencyValues,
-  FareDetailsBySegment,
-  FOPrice,
   Location,
   Operating,
   Segments,
@@ -19,49 +17,22 @@ dayjs.extend(localizedFormat);
 dayjs.locale("en");
 
 interface Props {
-  from: string;
-  to: string;
-  isReturn: boolean; // comparar si tenemos mas de un itinerario
   details: {
-    // id: string;
-    // price: FOPrice;
     travelerPricings: TravelerPricings[];
-    // travelerPricings: {
-    //   travelerId: string;
-    //   price: {
-    //     total: string;
-    //     currency: string;
-    //   };
-    //   fareDetailsBySegment: FareDetailsBySegment;
-    // }[];
     itineraries: {
       duration: string;
       segment: Segments;
-      //   segment: {
-      //     departure: {
-      //       iataCode: string;
-      //       at: string;
-      //     };
-      //     arrival: {
-      //       iataCode: string;
-      //       at: string;
-      //     };
-      //     aircraft: Aircraft;
-      //     operating: Operating;
-      //     airlineName: string;
-      //     carrierCode: string;
-      //     layoverTime: string | null;
-      //   };
     };
   };
-  //   locations: Record<string, string>;
   locations: Record<string, Location>;
   currencyCode: currencyValues;
+  keyId: string;
 }
 
-export const SegmentCard = ({ details, locations }: Props) => {
+export const SegmentCard = ({ details, locations, keyId }: Props) => {
   const itinerary = details.itineraries;
   const departureIATACodeStr = itinerary.segment.departure.iataCode;
+
   const departureAirportStr = locations[departureIATACodeStr].airportName;
 
   const departureDate: dayjs.Dayjs = dayjs(itinerary.segment.departure.at);
@@ -75,8 +46,14 @@ export const SegmentCard = ({ details, locations }: Props) => {
   const segmentAirline: string = itinerary.segment.airlineName;
   const segmentCarrierCode: string = itinerary.segment.carrierCode;
 
-  const operatingAirline: string = itinerary.segment.operating.airlineName;
-  const operatingCarrierCode: string = itinerary.segment.operating.carrierCode;
+  const operating: Operating | null = itinerary.segment.operating;
+  let operatingAirline: string = "";
+  let operatingCarrierCode: string = "";
+
+  if (operating != null) {
+    operatingAirline = operating.airlineName;
+    operatingCarrierCode = operating.carrierCode;
+  }
   let airlinesStr: string = `${segmentAirline} (${segmentCarrierCode})`;
 
   if (segmentCarrierCode != operatingCarrierCode) {
@@ -104,21 +81,50 @@ export const SegmentCard = ({ details, locations }: Props) => {
   });
 
   return (
-    <Box className="segment-card" sx={SC_sxStyle}>
-      <Box className="segment-left-child" sx={lefChild_sxStyle}>
-        <Typography variant="body1" fontSize={16.5}>
+    <Box
+      className="segment-card"
+      sx={SC_sxStyle}
+      key={`${keyId}-box-segment-card`}
+      data-testid={`${keyId}-box-segment-card`}
+    >
+      <Box
+        className="segment-left-child"
+        sx={lefChild_sxStyle}
+        key={`${keyId}-box-segment-card-left-child`}
+      >
+        <Typography
+          variant="body1"
+          fontSize={16.5}
+          key={`${keyId}-box-segment-card-date`}
+        >
           {departureFormattedDate} ----- {arrivalFormattedDate}
         </Typography>
-        <Typography variant="body1" fontSize={14.5}>
+        <Typography
+          variant="body1"
+          fontSize={14.5}
+          key={`${keyId}-box-segment-card-airports`}
+        >
           {departureAirportStr} ({departureIATACodeStr}) ----{" "}
           {arrivalAirportStr} ({arrivalIATACodeStr})
         </Typography>
-        <Typography variant="body1" fontSize={13}>
+        <Typography
+          variant="body1"
+          fontSize={13}
+          key={`${keyId}-box-segment-card-airlines`}
+        >
           {airlinesStr} {aircraftStr}
         </Typography>
       </Box>
-      <Box className="segment-right-child" sx={boxModal_sxStyle}>
-        <ModalDetails travelerInfo={segmentTravelerInfo} />
+      <Box
+        className="segment-right-child"
+        sx={boxModal_sxStyle}
+        key={`${keyId}-box-segment-card-right-child`}
+      >
+        <ModalDetails
+          travelerInfo={segmentTravelerInfo}
+          key={`${keyId}-box-segment-card-modal-details`}
+          keyId={`${keyId}-box-segment-card-modal-details`}
+        />
       </Box>
     </Box>
   );
