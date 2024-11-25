@@ -1,24 +1,21 @@
 import { Box, Button, Divider, Modal, Typography } from "@mui/material";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Box_sxStyle } from "./MD_sxStyles";
-import {
-  currencyValues,
-  FareDetailsBySegment,
-  TravelerInfo,
-} from "../../types";
+import { TravelerInfo } from "../../types";
 interface Props {
   travelerInfo: TravelerInfo[];
+  keyId: string;
 }
-const ModalDetails = ({ travelerInfo }: Props) => {
+const ModalDetails = ({ travelerInfo, keyId }: Props) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const renderTravelersInfo: () => JSX.Element[] = () => {
-    return travelerInfo.map((travelerInfoItem) => {
+    return travelerInfo.map((travelerInfoItem, travelerInfoItemIdx) => {
       const amenities = travelerInfoItem.fareDetailsBySegment.amenities;
       return (
-        <>
+        <Fragment key={`fragment-modal-traveler-${travelerInfoItemIdx}`}>
           <Typography
             className="modal-traveler-title"
             variant="h5"
@@ -54,18 +51,18 @@ const ModalDetails = ({ travelerInfo }: Props) => {
             );
           })}
           <Divider sx={{ mt: 2, mb: 2 }} />
-        </>
+        </Fragment>
       );
     });
   };
 
   return (
-    <>
+    <Fragment key={`${keyId}-fragment`}>
       <Button onClick={handleOpen}>Traveler Details</Button>
       <Modal open={open} onClose={handleClose}>
         <Box sx={Box_sxStyle}>{renderTravelersInfo()}</Box>
       </Modal>
-    </>
+    </Fragment>
   );
 };
 
