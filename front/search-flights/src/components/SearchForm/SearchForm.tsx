@@ -12,15 +12,10 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import {
-  baseFlight_path,
-  currencyItems,
-  IATAItems,
-  IATAOptions,
-} from "../../utils";
+import { baseFlight_path, currencyItems } from "../../utils";
 import { searchFlightContext } from "../../context/SearchFlightContext";
 import { APIConsumerContext } from "../../context/APIConsumerContext";
-import { FlightSearchRequest, IATAItem } from "../../types";
+import { FlightResultStates, FlightSearchRequest, IATAItem } from "../../types";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 
@@ -39,6 +34,7 @@ export const SearchForm = () => {
     departureIATAStr,
     errorArrivalDateMessage,
     errorDepartureDateMessage,
+    flightResultsState,
     tomorrow,
     handleArrivalIATAChange,
     handleCheckChange,
@@ -54,6 +50,9 @@ export const SearchForm = () => {
     setDepartureIATAStr,
     setErrorArrivalDate,
     setErrorDepartureDate,
+    setFlightResultsState,
+    setLocalStorageWithExpiry,
+    setLocations,
   } = useContext(searchFlightContext);
   const navigate = useNavigate();
 
@@ -64,7 +63,8 @@ export const SearchForm = () => {
     width: "50%",
   };
 
-  const { handleGetRecommendations } = useContext(APIConsumerContext);
+  const { handleGetRecommendations, handleGetFlightOffers } =
+    useContext(APIConsumerContext);
 
   const [hasMounted, setHasMounted] = useState<boolean>(false);
 
@@ -90,32 +90,54 @@ export const SearchForm = () => {
     arrivalName = arrivalName.split(" ").join("-");
 
     console.log(departureName, arrivalName);
-    for (let i = 0; i < IATAItems.length; i++) {
-      if (formData.originLocationCode == IATAItems[i].detailedName) {
-        formData.originLocationCode = IATAItems[i].iataCode;
+    for (let i = 0; i < departureIATAItems.length; i++) {
+      if (formData.originLocationCode == departureIATAItems[i].detailedName) {
+        formData.originLocationCode = departureIATAItems[i].iataCode;
         break;
       }
     }
-    for (let i = 0; i < IATAItems.length; i++) {
-      if (formData.destinationLocationCode == IATAItems[i].detailedName) {
-        formData.destinationLocationCode = IATAItems[i].iataCode;
+    for (let i = 0; i < arrivalIATAItems.length; i++) {
+      if (
+        formData.destinationLocationCode == arrivalIATAItems[i].detailedName
+      ) {
+        formData.destinationLocationCode = arrivalIATAItems[i].iataCode;
         break;
       }
     }
-    console.log(formData);
-    navigate(
-      `${baseFlight_path}/search/from/${departureName}/to/${arrivalName}`,
-      {
-        state: formData,
-      }
-    );
+    formData.order = "default";
+    handleGetFlightOffers(formData)
+      .then((flightResults) => {
+        const state: FlightResultStates = flightResultsState;
+        state.default = flightResults;
+        state.renderInfo = flightResults;
+        setFlightResultsState(state);
+        // setFlightResultsDefault(flightResults);
+        setLocations(flightResults.dictionaries.locations);
+        setLocalStorageWithExpiry(
+          `${departureName}-${arrivalName}-response-default`,
+          flightResults
+        );
+        setLocalStorageWithExpiry(
+          `${departureName}-${arrivalName}-request`,
+          formData
+        );
+        console.log(formData);
+        navigate(
+          `${baseFlight_path}/search/from/${departureName}/to/${arrivalName}`,
+          {
+            state: formData,
+          }
+        );
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  //remove comment to consume api
   useEffect(() => {
     //this prevents to make calls when component is mounted
     if (hasMounted) {
@@ -151,7 +173,12 @@ export const SearchForm = () => {
   }, [debouncedIATAArrivalReq, debouncedIATADepartureReq]);
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={FormSxStyles}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={FormSxStyles}
+      data-testid="search-form"
+    >
       <Autocomplete
         options={departureIATAOptions}
         //ooptions when API not workin
