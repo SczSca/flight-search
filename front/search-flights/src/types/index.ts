@@ -63,9 +63,18 @@ export interface FlightOffers {
 }
 
 export interface FlightOffersResponse {
+  type: string;
   dictionaries: Dictionaries;
   data: FlightOffers[];
 }
+
+export interface FlightResultStates {
+  renderInfo: FlightOffersResponse;
+  default: FlightOffersResponse;
+  cheapest: FlightOffersResponse;
+  fastest: FlightOffersResponse;
+}
+
 export interface FlightSearchRequest {
   originLocationCode: string;
   destinationLocationCode: string;
@@ -74,6 +83,7 @@ export interface FlightSearchRequest {
   adults: number;
   nonStop: boolean;
   currencyCode: string;
+  order: string;
 }
 
 export interface IATAResponse {
@@ -116,7 +126,7 @@ export interface Segments {
   airlineName: string;
   number: string;
   aircraft: Aircraft;
-  operating: Operating;
+  operating: Operating | null;
   duration: string;
   layoverTime: string | null;
 }
