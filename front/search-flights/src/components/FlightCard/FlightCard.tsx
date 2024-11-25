@@ -1,4 +1,4 @@
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {
   columnLeft_size,
@@ -14,32 +14,31 @@ import {
   travelerLabel_sxStyle,
   travelerPrice_sxStyle,
 } from "./FC_sxStyles";
-import {
-  currencyValues,
-  FlightCardData,
-  FlightOffers,
-  FOPrice,
-  Location,
-} from "../../types";
+import { currencyValues, FlightCardData, Location } from "../../types";
 import { baseFlight_path, currencySymbols } from "../../utils";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import "dayjs/locale/en"; // Cambia al idioma deseado
 import { useNavigate, useParams } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
 
 dayjs.extend(localizedFormat);
 dayjs.locale("en");
 
 interface Props {
-  flightResult: FlightCardData;
-  locations: Record<string, Location>;
   currencyCode: currencyValues;
+  flightResult: FlightCardData;
+  keyId: string;
+  locations: Record<string, Location>;
+  orderType: string;
 }
 
 export const FlightCard = ({
-  flightResult,
   currencyCode,
+  flightResult,
+  keyId,
   locations,
+  orderType,
 }: Props) => {
   // const {} = detail;
   // from
@@ -109,7 +108,7 @@ export const FlightCard = ({
 
       const className = gridClasses[itineraryIdx];
 
-      itinerary.segments.map((segment, segmentIdx) => {
+      itinerary.segments.map((segment) => {
         const airlineCode = segment.carrierCode;
 
         if (!(airlineCode in itinerary_airlinesRegistered)) {
@@ -123,7 +122,7 @@ export const FlightCard = ({
       }
 
       return (
-        <>
+        <Fragment key={`fragment-flight-card-${itineraryIdx}`}>
           <Grid
             container
             size={{ xs: 9, md: 8 }}
@@ -131,25 +130,25 @@ export const FlightCard = ({
             rowSpacing={0.3}
             pb={3}
             className={className}
-            key={`card-info-${itineraryIdx}`}
+            key={`${keyId}-card-info-${itineraryIdx}`}
           >
             <Grid
               className="departure-info-grid"
               size={columnLeft_size}
               sx={gridTexts_sxStyle}
               pl={paddingLeft}
-              key={`departure-info-grid-${itineraryIdx}`}
+              key={`${keyId}-departure-info-grid-${itineraryIdx}`}
             >
               <Typography
                 variant="body1"
-                key={`departure-label-${itineraryIdx}`}
+                key={`${keyId}-departure-label-${itineraryIdx}`}
               >
                 {" "}
                 Departure
               </Typography>
               <Typography
                 variant="body2"
-                key={`departure-info-${itineraryIdx}`}
+                key={`${keyId}-departure-info-${itineraryIdx}`}
               >
                 {departureMonthName}, {departureDay} {departureTime24h}
               </Typography>
@@ -158,13 +157,19 @@ export const FlightCard = ({
               className="arrival-info-grid"
               size={columnRight_size}
               sx={gridTexts_sxStyle}
-              key={`arrival-info-grid-${itineraryIdx}`}
+              key={`${keyId}-arrival-info-grid-${itineraryIdx}`}
             >
-              <Typography variant="body1" key={`arrival-label-${itineraryIdx}`}>
+              <Typography
+                variant="body1"
+                key={`${keyId}-arrival-label-${itineraryIdx}`}
+              >
                 {" "}
                 Arrival
               </Typography>
-              <Typography variant="body2" key={`arrival-info-${itineraryIdx}`}>
+              <Typography
+                variant="body2"
+                key={`${keyId}-arrival-info-${itineraryIdx}`}
+              >
                 {arrivalMonthName} {arrivalDay} {arrivalTime24h}
               </Typography>
             </Grid>
@@ -173,11 +178,11 @@ export const FlightCard = ({
               size={columnLeft_size}
               sx={gridTexts_sxStyle}
               pl={paddingLeft}
-              key={`departure-airport-grid-${itineraryIdx}`}
+              key={`${keyId}-departure-airport-grid-${itineraryIdx}`}
             >
               <Typography
                 variant="body2"
-                key={`departure-airport-${itineraryIdx}`}
+                key={`${keyId}-departure-airport-${itineraryIdx}`}
               >
                 {departureAirport}
               </Typography>
@@ -186,11 +191,11 @@ export const FlightCard = ({
               className="arrival-airport-grid"
               size={columnRight_size}
               sx={gridTexts_sxStyle}
-              key={`arrival-airport-grid-${itineraryIdx}`}
+              key={`${keyId}-arrival-airport-grid-${itineraryIdx}`}
             >
               <Typography
                 variant="body2"
-                key={`arrival-airport-${itineraryIdx}`}
+                key={`${keyId}-arrival-airport-${itineraryIdx}`}
               >
                 {arrivalAirport}
               </Typography>
@@ -200,9 +205,12 @@ export const FlightCard = ({
               size={7}
               sx={gridTexts_sxStyle}
               pl={paddingLeft}
-              key={`airlines-name-grid-${itineraryIdx}`}
+              key={`${keyId}-airlines-name-grid-${itineraryIdx}`}
             >
-              <Typography variant="body2" key={`airlines-name-${itineraryIdx}`}>
+              <Typography
+                variant="body2"
+                key={`${keyId}-airlines-name-${itineraryIdx}`}
+              >
                 {itinerary_airlines}
               </Typography>
             </Grid>
@@ -212,23 +220,26 @@ export const FlightCard = ({
             className="duration-info-grid"
             size={{ xs: 3, md: 4 }}
             columnSpacing={0}
-            key={`duration-info-grid-${itineraryIdx}`}
+            key={`${keyId}-duration-info-grid-${itineraryIdx}`}
           >
             <Grid
               className="hours-grid"
               size={12}
               sx={gridTexts_sxStyle}
               ml={2}
-              key={`hours-grid-${itineraryIdx}`}
+              key={`${keyId}-hours-grid-${itineraryIdx}`}
             >
               <Typography
                 variant="body1"
-                key={`duration-label-${itineraryIdx}`}
+                key={`${keyId}-duration-label-${itineraryIdx}`}
               >
                 {" "}
                 Duration
               </Typography>
-              <Typography variant="body2" key={`duratino-info-${itineraryIdx}`}>
+              <Typography
+                variant="body2"
+                key={`${keyId}-duratino-info-${itineraryIdx}`}
+              >
                 {durationStr} {stopsStr}
               </Typography>
               {itinerary.segments.map((segment, idx) => {
@@ -258,7 +269,7 @@ export const FlightCard = ({
                     layoverStr += `${minutes[1]}m`;
                   }
                   return (
-                    <Typography variant="body2" key={`stop-${idx}`}>
+                    <Typography variant="body2" key={`${keyId}-stop-${idx}`}>
                       {layoverStr} in {airportName} ({layoverIATACodeLocation})
                     </Typography>
                   );
@@ -267,7 +278,7 @@ export const FlightCard = ({
               })}
             </Grid>
           </Grid>
-        </>
+        </Fragment>
       );
     });
   };
@@ -275,23 +286,40 @@ export const FlightCard = ({
   const handleOnClickflightResult: React.MouseEventHandler<
     HTMLButtonElement
   > = () => {
+    const stateDetails = {
+      flightResult: flightResult,
+      locations: locations,
+      orderType: orderType,
+    };
     navigate(
       `${baseFlight_path}/details/from/${sourceLocation}/to/${destinationLocation}/${flightResult.id}`,
       {
-        state: flightResult,
+        state: stateDetails,
       }
     );
   };
   return (
     // <>
-    <Box className="flight-card" sx={FC_sxStyle}>
-      <Grid className="main-grid" container width={"100%"} columnSpacing={0}>
+    <Box
+      className="flight-card"
+      sx={FC_sxStyle}
+      key={`${keyId}-main-box`}
+      data-testid={`${keyId}-main-box`}
+    >
+      <Grid
+        className="main-grid"
+        container
+        width={"100%"}
+        columnSpacing={0}
+        key={`${keyId}-main-grid`}
+      >
         <Grid
           id="left-child-grid"
           container
           columnSpacing={0}
           size={{ xs: 9, md: 9 }}
           sx={leftGrid_sxStyle}
+          key={`${keyId}-left-child-grid`}
         >
           {renderCardInfo()}
         </Grid>
@@ -299,17 +327,30 @@ export const FlightCard = ({
           className="right-child-grid"
           size={{ xs: 3, md: 3 }}
           sx={rightGrid_sxStyle}
+          key={`${keyId}-right-child-grid`}
         >
-          <Box sx={rightContainer_sxStyle}>
-            <Typography variant="subtitle1" sx={travelerLabel_sxStyle}>
+          <Box sx={rightContainer_sxStyle} key={`${keyId}-right-child-box`}>
+            <Typography
+              variant="subtitle1"
+              sx={travelerLabel_sxStyle}
+              key={`${keyId}-right-child-box-label-price-traveler`}
+            >
               Price per traveler
             </Typography>
-            <Typography variant="body1" sx={travelerPrice_sxStyle}>
+            <Typography
+              variant="body1"
+              sx={travelerPrice_sxStyle}
+              key={`${keyId}-right-child-box-price-traveler`}
+            >
               {currencyCode}
               {currencySymbols[currencyCode]}{" "}
               {flightResult.travelerPricings[0].price.total}
             </Typography>
-            <Typography variant="body2" sx={totalPrice_sxStyle}>
+            <Typography
+              variant="body2"
+              sx={totalPrice_sxStyle}
+              key={`${keyId}-right-child-box-total-price`}
+            >
               Total price: {currencyCode}
               {currencySymbols[currencyCode]} {flightResult.price.total}
             </Typography>
@@ -317,6 +358,7 @@ export const FlightCard = ({
               variant="contained"
               sx={detailsBtn_sxStyles}
               onClick={handleOnClickflightResult}
+              key={`${keyId}-right-child-box-button-details`}
             >
               View Details
             </Button>
