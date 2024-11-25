@@ -10,4 +10,5 @@ import lombok.Setter;
 public class Location {
     private String cityCode;
     private String countryCode;
+    private String airportName;
 }
