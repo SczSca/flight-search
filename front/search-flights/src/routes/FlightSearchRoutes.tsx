@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { FlightDetails, FlightPages, Home } from "../pages";
 import { HeaderResults } from "../pages/layout/HeaderResults";
