@@ -61,6 +61,7 @@ export const APIConsumerProvider = ({ children }: ComponentWithChildren) => {
         adults: String(queryParams.adults),
         nonStop: String(queryParams.nonStop),
         currencyCode: queryParams.currencyCode,
+        order: queryParams.order,
       };
 
       const url = new URL(`${baseURL}/search/flights`);
@@ -75,6 +76,13 @@ export const APIConsumerProvider = ({ children }: ComponentWithChildren) => {
         },
       });
       const res = (await data.json()) as FlightOffersResponse;
+      let responseType: string = "1";
+      if (queryParams.order == "cheapest") {
+        responseType = "2";
+      } else if (queryParams.order == "fastest") {
+        responseType = "3";
+      }
+      res.type = responseType;
       setLoading(false);
       return res;
     } catch (error) {

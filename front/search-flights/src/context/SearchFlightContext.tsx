@@ -1,8 +1,8 @@
 import { createContext, useMemo, useState } from "react";
 import {
   ComponentWithChildren,
-  Dictionaries,
   FlightOffersResponse,
+  FlightResultStates,
   FlightSearchRequest,
   IATAItem,
   Location,
@@ -10,11 +10,14 @@ import {
 import { SelectChangeEvent } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { DateValidationError } from "@mui/x-date-pickers";
-import { currencyItems } from "../utils";
+import { currencyItems, flightResultsStates } from "../utils";
 import { useDebounce } from "../hooks/useDebounce";
-import { responseDummy } from "../utils/flightResponseDummy";
+import { blankLocations } from "../utils/blankValues";
 
 interface searchFlightContextI {
+  getLocalStorageWithExpiry: (
+    key: string
+  ) => FlightOffersResponse | FlightSearchRequest | null;
   handleDepartureIATAChange: (
     event: React.ChangeEvent<HTMLInputElement>
   ) => void;
@@ -35,9 +38,14 @@ interface searchFlightContextI {
   setErrorDepartureDate: React.Dispatch<
     React.SetStateAction<DateValidationError | null>
   >;
-  setFlightResults: React.Dispatch<
-    React.SetStateAction<FlightOffersResponse | undefined>
+
+  setFlightResultsState: React.Dispatch<
+    React.SetStateAction<FlightResultStates>
   >;
+  setLocalStorageWithExpiry: (
+    key: string,
+    value: FlightOffersResponse | FlightSearchRequest
+  ) => void;
   setLocations: React.Dispatch<React.SetStateAction<Record<string, Location>>>;
   arrivalIATAItems: IATAItem[];
   arrivalIATAOptions: string[];
@@ -52,7 +60,7 @@ interface searchFlightContextI {
   departureIATAStr: string;
   errorDepartureDateMessage: string;
   errorArrivalDateMessage: string;
-  flightResults: FlightOffersResponse | undefined;
+  flightResultsState: FlightResultStates;
   locations: Record<string, Location>;
   tomorrow: dayjs.Dayjs;
 }
@@ -90,16 +98,12 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
   const [errorDepartureDate, setErrorDepartureDate] =
     useState<DateValidationError | null>(null);
 
-  const [flightResults, setFlightResults] = useState<
-    FlightOffersResponse | undefined
-  >(responseDummy);
+  const [flightResultsState, setFlightResultsState] =
+    useState<FlightResultStates>(flightResultsStates);
 
-  const [locations, setLocations] = useState<Record<string, Location>>(
-    responseDummy.dictionaries.locations
-  );
-  // {
-  //   "000": { cityCode: "000", countryCode: "000", airportName: null },
-  // }
+  const [locations, setLocations] =
+    useState<Record<string, Location>>(blankLocations);
+
   const errorArrivalDateMessage = useMemo(() => {
     switch (errorArrivalDate) {
       case "maxDate":
@@ -145,11 +149,6 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
 
   const handleCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckedNonStop(event.target.checked);
-    // if (!checkedNonStop) {
-    //   setLabelValue(labelValues[0]);
-    // } else {
-    //   setLabelValue(labelValues[1]);
-    // }
   };
   const handleDepartureIATAChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -159,9 +158,6 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
 
   const handleDPDepartureChange = (newValue: Dayjs | null) => {
     setDepartureDate(newValue);
-    console.log(newValue);
-    // setDepartureDate(event.target.value);
-    // console.log(event.target.value);
   };
 
   const handleSelectChange = (event: SelectChangeEvent) => {
@@ -178,9 +174,44 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
     }
   };
 
+  const setLocalStorageWithExpiry = (
+    key: string,
+    value: FlightOffersResponse | FlightSearchRequest
+  ) => {
+    //30 * 60 * 1000 is 30 mins
+    const expirationTime: number = 30 * 60 * 1000;
+    const now = new Date();
+    const item = {
+      value,
+      expiry: now.getTime() + expirationTime, // current time + time-to-live (in ms)
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+  };
+
+  const getLocalStorageWithExpiry = (
+    key: string
+  ): FlightOffersResponse | FlightSearchRequest | null => {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) {
+      return null;
+    }
+
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+
+    // If the expiry time has passed, remove the item and return null
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return item.value as FlightOffersResponse | FlightSearchRequest;
+  };
+
   return (
     <searchFlightContext.Provider
       value={{
+        getLocalStorageWithExpiry,
         handleArrivalIATAChange,
         handleCheckChange,
         handleDepartureIATAChange,
@@ -195,7 +226,8 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
         setDepartureIATAStr,
         setErrorArrivalDate,
         setErrorDepartureDate,
-        setFlightResults,
+        setFlightResultsState,
+        setLocalStorageWithExpiry,
         setLocations,
         arrivalIATAItems,
         arrivalIATAOptions,
@@ -210,7 +242,7 @@ export const SearchFlightProvider = ({ children }: ComponentWithChildren) => {
         currency,
         errorArrivalDateMessage,
         errorDepartureDateMessage,
-        flightResults,
+        flightResultsState,
         locations,
         tomorrow,
       }}
