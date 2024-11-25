@@ -1,0 +1,12 @@
+version: "3.4"
+
+services:
+  amadeus_flights_backend:
+    image: backend-amadeus-flights:v1.0
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 9090:9090
