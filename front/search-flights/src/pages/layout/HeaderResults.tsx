@@ -9,7 +9,9 @@ export const HeaderResults = () => {
   const navigate = useNavigate();
 
   let title, buttonText;
-  let handleOnClick: React.MouseEventHandler<HTMLButtonElement>;
+  let handleOnClick: React.MouseEventHandler<HTMLButtonElement> = () => {
+    navigate("/");
+  };
 
   if (location.pathname.includes("search")) {
     title = `Flights from ${sourceLocation} to ${destinationLocation} Airport`;

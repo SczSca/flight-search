@@ -1,76 +1,26 @@
-import React, { useContext, useEffect } from "react";
-import loadingIcon from "../../assets/travel.gif";
-import { Backdrop, Box, Fade, Modal } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import { SearchForm } from "../../components/SearchForm/SearchForm";
 import { APIConsumerContext } from "../../context/APIConsumerContext";
-
-const sxStyle = {
-  display: "flex",
-  flexDirection: "column",
-  gap: 2,
-  alignItems: "center",
-  justifyContent: "center",
-};
-
-const titleSxStyle = {
-  marginTop: 4,
-  marginBottom: 4,
-};
-
-const style = {
-  position: "absolute",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
+import { sxStyle, titleSxStyle } from "./H_sxStyles";
+import { ModalLoading } from "../../components/ModalLoading/ModalLoading";
 
 export const Home = () => {
-  const [open, setOpen] = React.useState(true);
-  // const handleOpen = () => setOpen(true);
+  const [open, setOpen] = useState(true);
 
   const { loading } = useContext(APIConsumerContext);
   useEffect(() => {
-    // Cierra el modal automáticamente cuando `loadingT` es false
+    // closes modal when `loading` switches to false
 
     setOpen(loading);
   }, [loading]);
 
   return (
     <Box sx={sxStyle}>
-      <Box component={"h1"} sx={titleSxStyle}>
+      <Box component={"h1"} sx={titleSxStyle} data-testid="heading-home">
         Home
       </Box>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={open}
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 1000,
-          },
-        }}
-      >
-        <Fade in={open}>
-          <Box sx={style}>
-            <img
-              src={loadingIcon}
-              alt="loading icon"
-              width="60%"
-              height="60%"
-            />
-            <h1>Looking for Flights...</h1>
-          </Box>
-        </Fade>
-      </Modal>
+      <ModalLoading open={open} data-testid="modal-loading" />
       <SearchForm />
     </Box>
   );
