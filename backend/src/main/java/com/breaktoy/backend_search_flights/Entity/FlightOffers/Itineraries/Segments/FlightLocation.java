@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter
 public class FlightLocation {
     private String iataCode;
-    private String airportName;
     private String terminal;
     private String at;
 }
