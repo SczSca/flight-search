@@ -117,7 +117,7 @@ Make sure you have the following installed:
   //this will install the latest version check: https://formulae.brew.sh/formula/openjdk
   brew install openjdk
   ```
-- [Maven](https://maven.apache.org/download.cgi)
+- [Gradle](https://gradle.org)
 
 #### Open project directory
 ```bash
@@ -142,7 +142,7 @@ http://localhost:9090
 
 #### Running tests
 ```bash
-texts in progress of implementation
+tests in progress of implementation
 ```
 
 ### Features
