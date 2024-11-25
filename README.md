@@ -1,10 +1,10 @@
 # Flight
 ## Clone the Repository
 ```bash
-git clone https://github.com/SczSca/to-do-app.git
+git clone https://github.com/SczSca/flight-search.git
 ```
 
-## To-do Frontend
+## flight-search Frontend
 
 
 ### Getting Started
@@ -19,7 +19,7 @@ You may choose between one of these:
 
 #### Open project directory
 ```bash
-cd front-end/to-do_app/
+cd front-end/search-flights/
 ```
 #### Running app
 
@@ -29,25 +29,18 @@ Installing dependencies used in project:
 ```bash
 npm install
 ```
-After installing, use this command to initialize app:
+After installing, use this command to create docker image of app:
 ```bash
-npm run start
+docker build . -t "front-amadeus-flightst:v1.0"
 ```
-##### Using yarn
-
-
-Installing dependencies used in project:
+After creating a docker image just as mentioned, use docker compose up:
 ```bash
-yarn install
+docker compose up
 ```
-After installing, use this command to initialize app:
 
-```bash
-yarn start
-```
 The application will start and be available at: 
 ```bash
-http://localhost:8080
+http://localhost:3000/
 ```
 
 #### Running tests
@@ -64,25 +57,54 @@ yarn tests
 ```
 ### Features
 
-The To-do List application includes the following features to help manage tasks efficiently:
+1. **Flight Search Form**  
+   - Input fields for:
+     - Departure airport code or name
+     - Arrival airport code or name
+     - Departure date
+     - Number of adults
+     - Preferred currency (USD, MXN, EUR)
+     - Flight preferences (non-stop or with stops)
+   - Dynamically loads matching airport codes based on partial names or inputs to assist users in finding the correct IATA code.
 
-- **Create To-do Items**: Users can create a new to-do item by specifying a name, priority, and optionally a due date.
+2. **Search Validations**  
+   - Prevents users from selecting past dates as departure dates.
+   - Ensures the return date (if applicable) is not earlier than the departure date.
 
-- **Edit To-do Items**: Users can update the name, priority, and due date of existing to-do tasks. They can also clear the due date if it's no longer relevant.
+3. **Flight Results Display**  
+   - Shows a list of flight options with:
+     - Initial departure and final arrival date/time
+     - Departure and arrival airports (name and code)
+     - Airline name and code
+     - Total flight duration, including layover times (if applicable)
+     - Stops information with duration and details (name and code of layover airports)
+     - Total price and price per traveler in the selected currency.
 
-- **Filter To-do Items**: Users can filter the to-do list based on the name (or part of the name), priority, and completion status (done/undone).
+4. **Sorting and Filtering**  
+   - Allows sorting of results by price and/or flight duration.
 
-- **Sort To-do Items**: Users can sort to-do items by priority and/or due date. This allows for organizing tasks based on urgency and deadlines.
+5. **Flight Details View**  
+   - Displays a comprehensive breakdown for each selected flight:
+     - Segment details, including:
+       - Departure/arrival time
+       - Airline and operating carrier details
+       - Flight number and aircraft type
+       - Cabin, class, and traveler fare details
+       - Amenities (name, availability, and chargeability)
+     - Layover durations between segments
+   - Shows a detailed price breakdown:
+     - Base price
+     - Fees
+     - Total price
+     - Price per traveler
+   - Displays all amounts in the user-selected currency.
 
-- **Mark as Done/Undone**: Users can mark to-do items as done by clicking a checkbox. There is also an option to mark items as undone if necessary.
+6. **Roundtrip Functionality**  
+   - Handles roundtrip searches by displaying returning flight details similarly to the departing flight.
 
-- **Pagination**: The application supports pagination to manage a large number of to-do items efficiently.
+---
 
-- **Performance Metrics**: The application calculates and displays the average time between the creation and completion of to-do items. This metric is available both in general and grouped by priority to help measure performance.
-
-
-
-## To-do Backend
+## flight-search Backend
 
 This is the backend application for the To-do list app built with Spring Boot and Maven. This guide will help you set up and run the application locally.
 
@@ -103,7 +125,15 @@ cd back-end
 ```
 #### Running app
 ```bash
-mvn spring-boot:run
+./gradlew build
+```
+After installing, use this command to create docker image of app:
+```bash
+docker build . -t "backend-amadeus-flights:v1.0"
+```
+After creating a docker image just as mentioned, use docker compose up:
+```bash
+docker compose up
 ```
 The application will start and be available at: 
 ```bash
@@ -112,64 +142,58 @@ http://localhost:9090
 
 #### Running tests
 ```bash
-mvn test
+texts in progress of implementation
 ```
 
 ### Features
 
-The To-do List application provides a set of RESTful API endpoints to manage tasks effectively. Below are the key API endpoints:
-
 #### Base Endpoint
-All endpoints are prefixed with `/api/tasks`.
+All endpoints are prefixed with `/api/v1`.
+# Backend Features
 
-#### Get Tasks
-**Endpoint**: `GET /api/tasks/search/prior/{prior}/status/{status}/text/{text}/page/{page}/dateAsc/{isDateAsc}/priorAsc/{isPriorAsc}`  
-**Description**: Fetch a list of tasks with pagination and various filtering options.  
-- **Pagination**: Each page contains 10 tasks.
-- **Sorting**: Sort tasks by priority and/or due date.
-- **Filters**:
-  - By completion status (done/undone).
-  - By task name or part of the name.
-  - By priority.
+The backend service is built using **Spring Boot** and exposes a REST API for flight search and airport information, which communicates with the **Amadeus API** for flight offers and IATA code recommendations.
 
-**Parameters**:
-- `prior` (String): Filter by task priority.
-- `status` (String): Filter by task status (done/undone).
-- `text` (String): Filter by name or part of the name.
-- `page` (int): Specify the page number.
-- `isDateAsc` (String): Sort tasks by due date in ascending (`true`) or descending (`false`) order.
-- `isPriorAsc` (String): Sort tasks by priority in ascending (`true`) or descending (`false`) order.
+## API Endpoints
 
-#### Get Time Metrics
-**Endpoint**: `GET /api/tasks/time`  
-**Description**: Retrieve performance metrics showing the average time between task creation and completion. This metric is displayed both in general and grouped by priority.
+### 1. **Get IATA Recommendations**
+   - **Endpoint:** `/info/IATA`
+   - **Method:** `GET`
+   - **Description:** This endpoint allows users to retrieve airport IATA code recommendations based on a search keyword (partial or full airport name). It helps users find the correct airport IATA code without needing to know it beforehand.
+   - **Request Parameters:**
+     - `keyword` (required): A string representing the airport name or part of it.
+   - **Response:** A list of IATA codes and corresponding airport names matching the keyword.
+   - **Example Request:**  
+     `/api/v1/info/IATA?keyword=New York`
+   
+   This endpoint is mapped to the `getIATARecommendations` method in the `FlightController` class, which interacts with the `FlightService` to retrieve the recommended IATA codes.
 
-#### Create Task
-**Endpoint**: `POST /api/tasks`  
-**Description**: Create a new task with the following fields: name, priority, and due date (optional).  
-**Request Body**: `TaskDTO` object containing the task details.  
-**Validations**: Ensures that all required fields are provided and valid.
+### 2. **Get Flight Offers**
+   - **Endpoint:** `/search/flights`
+   - **Method:** `GET`
+   - **Description:** This endpoint fetches flight offers from the Amadeus API based on several search parameters such as origin and destination airports, departure and return dates, number of adults, currency, and whether the flight is non-stop.
+   - **Request Parameters:**
+     - `originLocationCode` (required): The IATA code of the departure airport.
+     - `destinationLocationCode` (required): The IATA code of the arrival airport.
+     - `departureDate` (required): The departure date in `YYYY-MM-DD` format.
+     - `returnDate` (required): The return date in `YYYY-MM-DD` format.
+     - `adults` (required): The number of adult passengers.
+     - `nonStop` (required): Boolean indicating whether the flight is non-stop.
+     - `currencyCode` (required): The currency in which the prices should be returned (USD, EUR, MXN).
+     - `order` (required): Sorting preference for results (`price` or `duration`).
+   - **Response:** A list of available flight options with details including flight times, airports, airline details, and pricing.
+   - **Example Request:**  
+     `/api/v1/search/flights?originLocationCode=NYC&destinationLocationCode=LON&departureDate=2024-12-15&returnDate=2024-12-20&adults=1&nonStop=true&currencyCode=USD&order=price`
 
-#### Delete Task
-**Endpoint**: `DELETE /api/tasks/{id}`  
-**Description**: Delete an existing task by its ID.  
-**Parameters**:  
-- `id` (Long): The unique identifier of the task to be deleted.
+   The endpoint is mapped to the `getFlightOffers` method in the `FlightController` class, which fetches flight offer details using the `FlightService`.
 
-#### Update Task Info
-**Endpoint**: `PUT /api/tasks/{id}`  
-**Description**: Update the name, due date, or priority of an existing task.  
-**Request Body**: `TaskDTO` object containing the updated task details.  
-**Parameters**:  
-- `id` (Long): The unique identifier of the task to be updated.
+## Airport Information Optimization
 
-#### Update Task Status (Done/Undone)
-**Endpoint**: `PATCH /api/tasks/{id}/change-status`  
-**Description**: Update the status of a task to mark it as done or undone.  
-- If the task is already marked as done, no action is taken.  
-- If the status is changed to "done", the system updates the "done date" property.  
-**Parameters**:  
-- `id` (Long): The unique identifier of the task to change the status.
+To reduce the number of API requests to Amadeus for airport data, a **pre-population script** is implemented to make **5 requests** to Amadeus at the backend's startup. These requests are designed to collect the most relevant IATA results, which are then stored locally. This optimization ensures that the application performs efficiently by minimizing external API calls for airport-related information.
+
+## Summary of Flow
+- **When the backend is initiated**, a script makes 5 requests to Amadeus to gather IATA recommendations based on common airport queries. These results are then stored locally in the system to reduce repeated API calls.
+- **Users interact with the backend via two key endpoints**: one for IATA code recommendations and another for retrieving flight offers based on user inputs. The backend communicates with the Amadeus API to provide the necessary data, and the results are returned in the response.
+
 
 
 
