@@ -13,6 +13,7 @@ import {
   totalPrice_sxStyle,
   travelerLabel_sxStyle,
   travelerPrice_sxStyle,
+  typographyFlightInfo_sxStyle,
 } from "./FC_sxStyles";
 import { currencyValues, FlightCardData, Location } from "../../types";
 import { baseFlight_path, currencySymbols } from "../../utils";
@@ -169,6 +170,7 @@ export const FlightCard = ({
               <Typography
                 variant="body2"
                 key={`${keyId}-arrival-info-${itineraryIdx}`}
+                sx={typographyFlightInfo_sxStyle}
               >
                 {arrivalMonthName} {arrivalDay} {arrivalTime24h}
               </Typography>
@@ -269,7 +271,11 @@ export const FlightCard = ({
                     layoverStr += `${minutes[1]}m`;
                   }
                   return (
-                    <Typography variant="body2" key={`${keyId}-stop-${idx}`}>
+                    <Typography
+                      variant="body2"
+                      key={`${keyId}-stop-${idx}`}
+                      sx={typographyFlightInfo_sxStyle}
+                    >
                       {layoverStr} in {airportName} ({layoverIATACodeLocation})
                     </Typography>
                   );

@@ -56,3 +56,9 @@ export const totalPrice_sxStyle = {
   fontSize: "1rem",
   fontWeight: "600",
 };
+
+export const typographyFlightInfo_sxStyle = {
+  whiteSpace: "normal",
+  overflow: "hidden",
+  wordWrap: "break-word",
+};
