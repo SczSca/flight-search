@@ -89,7 +89,6 @@ export const SearchForm = () => {
     let arrivalName: string = formData.destinationLocationCode.split(":")[1];
     arrivalName = arrivalName.split(" ").join("-");
 
-    console.log(departureName, arrivalName);
     for (let i = 0; i < departureIATAItems.length; i++) {
       if (formData.originLocationCode == departureIATAItems[i].detailedName) {
         formData.originLocationCode = departureIATAItems[i].iataCode;
@@ -121,7 +120,6 @@ export const SearchForm = () => {
           `${departureName}-${arrivalName}-request`,
           formData
         );
-        console.log(formData);
         navigate(
           `${baseFlight_path}/search/from/${departureName}/to/${arrivalName}`,
           {
@@ -262,7 +260,6 @@ export const SearchForm = () => {
         }}
         onInput={(e) => {
           const target = e.target as HTMLInputElement; // Cast to HTMLInputElement
-          console.log(target.value);
           if (target.value && parseInt(target.value) < 1) {
             target.setCustomValidity("There must be at least one adult");
           } else {
