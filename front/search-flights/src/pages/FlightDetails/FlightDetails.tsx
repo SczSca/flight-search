@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Divider, Typography } from "@mui/material";
 
 import {
   boxesContainerSxStyle,
@@ -61,6 +61,30 @@ export const FlightDetails = () => {
     setLocations(localStorageFlights.dictionaries.locations);
   }
 
+  const renderLayoverInfo: (layOverTime: string) => JSX.Element = (
+    layOverTime: string
+  ) => {
+    //get layover time to put into string. format ISO_8601
+    let layoverStr: string = "";
+    const days = layOverTime.match(/P(.*?)D/);
+    const hours = layOverTime.match(/T(.*?)H/);
+    const minutes = layOverTime.match(/H(.*?)M/);
+
+    if (days && days[1] != "0") {
+      layoverStr += `${days[1]}d `;
+    }
+
+    if (hours) {
+      layoverStr += `${hours[1]}h `;
+    }
+
+    if (minutes) {
+      layoverStr += `${minutes[1]}m`;
+    }
+    layoverStr += " layover time";
+    return <Divider>{layoverStr}</Divider>;
+  };
+
   const priceColumnDetails = {
     price: flightResult.price,
     travelerPricing: flightResult.travelerPricings,
@@ -101,13 +125,22 @@ export const FlightDetails = () => {
                 };
 
                 return (
-                  <SegmentCard
-                    details={details}
-                    locations={locationsRenderInfo}
-                    currencyCode={flightResult.price.currency as currencyValues}
-                    key={`segment-card-${itineraryIdx}-${segmentIdx}`}
-                    keyId={`segment-card-${itineraryIdx}-${segmentIdx}`}
-                  />
+                  <Fragment
+                    key={`fragment-card-layover-${itineraryIdx}-${segmentIdx}`}
+                  >
+                    {segmentIdx !== 0
+                      ? renderLayoverInfo(segment.layoverTime as string)
+                      : null}
+                    <SegmentCard
+                      details={details}
+                      locations={locationsRenderInfo}
+                      currencyCode={
+                        flightResult.price.currency as currencyValues
+                      }
+                      key={`segment-card-${itineraryIdx}-${segmentIdx}`}
+                      keyId={`segment-card-${itineraryIdx}-${segmentIdx}`}
+                    />
+                  </Fragment>
                 );
               })}
             </Fragment>
