@@ -328,7 +328,7 @@ public class FlightService {
             }
 
             if (itineraryDuration.contains("M")) {
-                String minutesNumStr = getSubstrBetweenChars(itineraryDuration, 'T', 'H');
+                String minutesNumStr = getSubstrBetweenChars(itineraryDuration, 'H', 'M');
                 float minutesNum = Float.parseFloat(minutesNumStr);
                 flightOfferDuration += minutesNum / 100;
             }
